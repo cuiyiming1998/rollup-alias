@@ -39,5 +39,28 @@ describe('alias', () => {
 
 			expect(aliasObj.resolveId('@/add')).toBe('./utils/add.js')
 		})
+
+		it('匹配正则', () => {
+			const aliasObj: any = alias({
+				entries: [
+					{
+						find: /^(.*)\.js$/,
+						replacement: '$1.alias'
+					}
+				]
+			})
+
+			expect(aliasObj.resolveId('add.js')).toBe('add.alias.js')
+		})
+
+		it('不匹配时应该直接返回原数据', () => {
+			const aliasObj: any = alias({
+				entries: {
+					'@': './utils'
+				}
+			})
+
+			expect(aliasObj.resolveId('!/add')).toBe('!/add')
+		})
 	})
 })

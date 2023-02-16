@@ -15,11 +15,15 @@ function normalizeEntries(entries: AliasOptions['entries']) {
 }
 
 class Entry {
-	constructor(private find: string, private replacement: string) {}
+	constructor(private find: string | RegExp, private replacement: string) {}
 
 	// 判断是否匹配
 	match(filePath: string) {
-		return filePath.startsWith(this.find)
+		if (typeof this.find === 'string') {
+			return filePath.startsWith(this.find)
+		} else {
+			return this.find.test(filePath)
+		}
 	}
 
 	// 替换
@@ -33,7 +37,7 @@ interface AliasOptions {
 		| {
 				[key: string]: string
 		  }
-		| { find: string; replacement: string }[]
+		| { find: string | RegExp; replacement: string }[]
 }
 
 export function alias(options: AliasOptions): Plugin {
